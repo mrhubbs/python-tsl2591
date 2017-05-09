@@ -1,11 +1,11 @@
 '''
-This code is basically an adaptation of the Arduino_TSL2591 library from 
+This code is basically an adaptation of the Arduino_TSL2591 library from
 adafruit: https://github.com/adafruit/Adafruit_TSL2591_Library
 
-for configuring I2C in a raspberry 
+for configuring I2C in a raspberry
 https://learn.adafruit.com/adafruits-raspberry-pi-lesson-4-gpio-setup/configuring-i2c
 
-datasheet: 
+datasheet:
 http://ams.com/eng/Products/Light-Sensors/Light-to-Digital-Sensors/TSL25911
 
 '''
@@ -104,7 +104,7 @@ class Tsl2591(object):
         # Check for overflow conditions first
         if (full == 0xFFFF) | (ir == 0xFFFF):
             return 0
-            
+
         case_integ = {
             INTEGRATIONTIME_100MS: 100.,
             INTEGRATIONTIME_200MS: 200.,
@@ -161,7 +161,7 @@ class Tsl2591(object):
                     )
         ir = self.bus.read_word_data(
                     self.sendor_address, COMMAND_BIT | REGISTER_CHAN1_LOW
-                    )                    
+                    )
         self.disable()
         return full, ir
 
@@ -179,6 +179,10 @@ class Tsl2591(object):
         else: # unknown channel!
             return 0
 
+    def get_intensity(self):
+        full, ir = self.get_full_luminosity()
+        return self.calculate_lux(full, ir)
+
 
 if __name__ == '__main__':
 
@@ -195,7 +199,7 @@ if __name__ == '__main__':
         lux_test = tsl.calculate_lux(full_test, ir_test)
         print ('Lux = %f  full = %i  ir = %i' % (lux_test, full_test, ir_test))
         print("integration time = %i" % tsl.get_timing())
-        print("gain = %i \n" % tsl.get_gain())        
+        print("gain = %i \n" % tsl.get_gain())
 
     for i in [INTEGRATIONTIME_100MS,
               INTEGRATIONTIME_200MS,
